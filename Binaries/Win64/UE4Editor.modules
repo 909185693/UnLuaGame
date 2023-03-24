@@ -1,0 +1,14 @@
+{
+	"BuildId": "17155196",
+	"Modules": 
+	{
+		"LuaCJson": "UE4Editor-LuaCJson.dll",
+		"LuaModule": "UE4Editor-LuaModule.dll",
+		"LuaPanda": "UE4Editor-LuaPanda.dll",
+		"LuaProtobuf": "UE4Editor-LuaProtobuf.dll",
+		"LuaSocket": "UE4Editor-LuaSocket.dll",
+		"UnLuaGame": "UE4Editor-UnLuaGame.dll",
+		"UnLuaHexNavSystem": "UE4Editor-UnLuaHexNavSystem.dll",
+		"UnLuaProfiler": "UE4Editor-UnLuaProfiler.dll"
+	}
+}
