@@ -18,7 +18,7 @@ public:
 	UUnLuaGameSettings(const FObjectInitializer& ObjectInitializer);
 
 	UPROPERTY(Config, EditAnywhere, Category = "Runtime")
-	bool bExportCJsonLib = true;
+	bool bExportLuaCJsonLib = true;
 
 	UPROPERTY(Config, EditAnywhere, Category = "Runtime")
 	bool bExportLuaProtobufLib = true;
