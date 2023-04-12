@@ -39,28 +39,19 @@ static int32 APlayerController_GetUniqueNetId(lua_State* L)
 		return luaL_error(L, "invalid APlayerController");
 	}
 
-	TArray<uint8> Data;
+	void* Userdata = NewTypedUserdata(L, FUniqueNetIdRepl);
+	FUniqueNetIdRepl* UniqueNetIdRepl = new(Userdata) FUniqueNetIdRepl();
 
 	APlayerState* PlayerState = PlayerController->GetPlayerState<APlayerState>();
 	if (PlayerState != nullptr)
 	{
 #if ENGINE_MAJOR_VERSION > 4 || ENGINE_MINOR_VERSION > 24
-		FUniqueNetIdRepl UniqueNetId = PlayerState->GetUniqueId();
+		*UniqueNetIdRepl = PlayerState->GetUniqueId();
 #else
-		FUniqueNetIdRepl UniqueNetId = PlayerState->UniqueId;
+		*UniqueNetIdRepl = PlayerState->UniqueId;
 #endif
-		if (UniqueNetId.IsValid())
-		{
-			int32 Size = UniqueNetId->GetSize();
-
-			Data.Reset();
-			Data.AddUninitialized(Size);
-
-			FMemory::Memcpy(Data.GetData(), UniqueNetId->GetBytes(), Size);
-		}
 	}
 
-	lua_pushstring(L, (const char*)Data.GetData());
 	return 1;
 }
 

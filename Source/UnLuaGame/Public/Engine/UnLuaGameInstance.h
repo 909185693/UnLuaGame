@@ -35,13 +35,13 @@ public:
 	void ReceivePostLoadMapWithWorld(UWorld* LoadedWorld);
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void ReceivePreLogin(AGameModeBase* GameMode, const FUniqueNetIdRepl& UniqueNetId, const FString& PlayerUID);
+	void ReceivePreLogin(AGameModeBase* GameMode, const FUniqueNetIdRepl& UniqueNetId);
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void ReceivePostLogin(AGameModeBase* GameMode, APlayerController* NewPlayer, const FString& PlayerUID);
+	void ReceivePostLogin(AGameModeBase* GameMode, APlayerController* NewPlayer);
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void ReceiveLogout(AGameModeBase* GameMode, AController* Exiting, const FString& PlayerUID);
+	void ReceiveLogout(AGameModeBase* GameMode, AController* Exiting);
 
 protected:
 	virtual void PreLoadMap(const FString& MapName);

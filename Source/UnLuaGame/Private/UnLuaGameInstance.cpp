@@ -53,47 +53,17 @@ void UUnLuaGameInstance::PostLoadMapWithWorld(UWorld* LoadedWorld)
 
 void UUnLuaGameInstance::PreLogin(AGameModeBase* GameMode, const FUniqueNetIdRepl& NewPlayer, FString& ErrorMessage)
 {
-	ReceivePreLogin(GameMode, NewPlayer, NewPlayer.IsValid() ? UTF8_TO_TCHAR(NewPlayer->GetBytes()) : TEXT(""));
+	ReceivePreLogin(GameMode, NewPlayer);
 }
 
 void UUnLuaGameInstance::PostLogin(AGameModeBase* GameMode, APlayerController* NewPlayer)
 {
-	FString PlayerUID = TEXT("");
-
-	APlayerState* PlayerState = NewPlayer ? NewPlayer->GetPlayerState<APlayerState>() : nullptr;
-#if ENGINE_MAJOR_VERSION > 4 || ENGINE_MINOR_VERSION > 24
-	if (PlayerState && PlayerState->GetUniqueId().IsValid())
-	{
-		PlayerUID = UTF8_TO_TCHAR(PlayerState->GetUniqueId()->GetBytes());
-	}
-#else
-	if (PlayerState && PlayerState->UniqueId.IsValid())
-	{
-		PlayerUID = UTF8_TO_TCHAR(PlayerState->UniqueId->GetBytes());
-	}
-#endif
-
-	ReceivePostLogin(GameMode, NewPlayer, PlayerUID);
+	ReceivePostLogin(GameMode, NewPlayer);
 }
 
 void UUnLuaGameInstance::Logout(AGameModeBase* GameMode, AController* Exiting)
 {
-	FString PlayerUID = TEXT("");
-
-	APlayerState* PlayerState = Exiting ? Exiting->GetPlayerState<APlayerState>() : nullptr;
-#if ENGINE_MAJOR_VERSION > 4 || ENGINE_MINOR_VERSION > 24
-	if (PlayerState && PlayerState->GetUniqueId().IsValid())
-	{
-		PlayerUID = UTF8_TO_TCHAR(PlayerState->GetUniqueId()->GetBytes());
-	}
-#else
-	if (PlayerState && PlayerState->UniqueId.IsValid())
-	{
-		PlayerUID = UTF8_TO_TCHAR(PlayerState->UniqueId->GetBytes());
-	}
-#endif
-	
-	ReceiveLogout(GameMode, Exiting, PlayerUID);
+	ReceiveLogout(GameMode, Exiting);
 }
 
 void UUnLuaGameInstance::ForceGC()
