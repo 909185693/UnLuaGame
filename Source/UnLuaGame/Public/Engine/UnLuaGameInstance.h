@@ -15,6 +15,12 @@ class UNLUAGAME_API UUnLuaGameInstance : public UGameInstance
 {
 	GENERATED_UCLASS_BODY()
 
+	/** Create a new player. */
+	virtual ULocalPlayer* CreateInitialPlayer(FString& OutError) override;
+	
+	/** Removes a player. */
+	virtual bool RemoveLocalPlayer(ULocalPlayer* ExistingPlayer) override;
+
 	/** virtual function to allow custom GameInstances an opportunity to set up what it needs */
 	virtual void Init() override;
 

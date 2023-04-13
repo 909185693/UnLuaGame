@@ -5,11 +5,24 @@
 #include "GameFramework/PlayerState.h"
 #include "GameFramework/PlayerController.h"
 
+static int32 ControllerCount = 0;
 
 UUnLuaGameInstance::UUnLuaGameInstance(const class FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 
+}
+
+ULocalPlayer* UUnLuaGameInstance::CreateInitialPlayer(FString& OutError)
+{
+	return CreateLocalPlayer(ControllerCount++, OutError, false);
+}
+
+bool UUnLuaGameInstance::RemoveLocalPlayer(ULocalPlayer* ExistingPlayer)
+{
+	ControllerCount--;
+
+	return Super::RemoveLocalPlayer(ExistingPlayer);
 }
 
 void UUnLuaGameInstance::Init()
