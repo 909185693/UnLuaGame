@@ -40,7 +40,7 @@ static const luaL_Reg FUniqueNetIdReplLib[] =
  * Export FUniqueNetIdRepl
  */
 BEGIN_EXPORT_REFLECTED_CLASS(FUniqueNetIdRepl)
-	ADD_FUNCTION(ToString)
+	ADD_FUNCTION_EX("ToString", FString, ToString)
 	ADD_FUNCTION_EX("__tostring", FString, ToString)
     ADD_LIB(FUniqueNetIdReplLib)
 END_EXPORT_CLASS()
