@@ -16,6 +16,7 @@ class UNLUAGAME_API AUnLuaCharacter : public ACharacter
 	virtual void PostInitializeComponents() override;
 
 	virtual void Restart() override;
+	virtual void PawnClientRestart() override;
 	virtual void OnRep_PlayerState() override;
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 	virtual bool TeleportTo(const FVector& DestLocation, const FRotator& DestRotation, bool bIsATest = false, bool bNoCheck = false) override;
@@ -32,6 +33,9 @@ class UNLUAGAME_API AUnLuaCharacter : public ACharacter
 
 	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "Restart"), Category = "Game|Pawn")
 	void ReceiveRestart();
+
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "Restart"), Category = "Game|Pawn")
+	void ReceivePawnClientRestart();
 
 	UFUNCTION(BlueprintNativeEvent, meta = (DisplayName = "ModifyDamage"), Category = "Game|Damage")
 	float ReceiveModifyDamage(float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);

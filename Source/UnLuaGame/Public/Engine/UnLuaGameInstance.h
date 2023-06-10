@@ -7,9 +7,6 @@
 #include "UnLuaGameInstance.generated.h"
 
 
-class UUnLuaObject;
-
-
 UCLASS(Config=Game)
 class UNLUAGAME_API UUnLuaGameInstance : public UGameInstance
 {

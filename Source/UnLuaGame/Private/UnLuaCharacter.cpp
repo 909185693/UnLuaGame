@@ -35,6 +35,13 @@ void AUnLuaCharacter::Restart()
 	ReceiveRestart();
 }
 
+void AUnLuaCharacter::PawnClientRestart()
+{
+	Super::PawnClientRestart();
+
+	ReceivePawnClientRestart();
+}
+
 void AUnLuaCharacter::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
