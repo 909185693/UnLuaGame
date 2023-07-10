@@ -32,7 +32,11 @@ void AUnLuaGameMode::PreLogin(const FString& Options, const FString& Address, co
 	if (ErrorMessage.IsEmpty())
 	{
 		// Login unique id must match server expected unique id type OR No unique id could mean game doesn't use them
+	#if ENGINE_MAJOR_VERSION >= 5
+		const bool bUniqueIdCheckOk = (!UniqueId.IsValid() || UOnlineEngineInterface::Get()->IsCompatibleUniqueNetId(UniqueId));
+	#else
 		const bool bUniqueIdCheckOk = (!UniqueId.IsValid() || UOnlineEngineInterface::Get()->IsCompatibleUniqueNetId(*UniqueId));
+	#endif
 		if (bUniqueIdCheckOk)
 		{
 			ErrorMessage = GameSession->ApproveLogin(Options);

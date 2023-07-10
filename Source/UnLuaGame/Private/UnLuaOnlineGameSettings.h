@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Online.h"
+#include "OnlineSessionSettings.h"
 
 /**
  * General session settings for a UnLua game

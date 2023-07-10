@@ -2,6 +2,7 @@
 
 #include "GameFramework/UnLuaGameSession.h"
 #include "UnLuaOnlineGameSettings.h"
+#include "Online/OnlineSessionNames.h"
 #include "OnlineSubsystemSessionSettings.h"
 
 
