@@ -2,7 +2,9 @@
 
 #include "GameFramework/UnLuaGameSession.h"
 #include "UnLuaOnlineGameSettings.h"
+#if ENGINE_MAJOR_VERSION > 4
 #include "Online/OnlineSessionNames.h"
+#endif
 #include "OnlineSubsystemSessionSettings.h"
 
 
