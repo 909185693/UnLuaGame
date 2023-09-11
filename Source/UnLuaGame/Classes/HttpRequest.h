@@ -78,8 +78,8 @@ protected:
 
 private:
 #if ENGINE_MAJOR_VERSION > 4 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION > 24)
-	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> HttpRequest = FHttpModule::Get().CreateRequest();
+	TSharedPtr<IHttpRequest, ESPMode::ThreadSafe> HttpRequest;
 #else
-	TSharedRef<IHttpRequest, ESPMode::NotThreadSafe> HttpRequest = FHttpModule::Get().CreateRequest();
+	TSharedPtr<IHttpRequest, ESPMode::NotThreadSafe> HttpRequest
 #endif
 };

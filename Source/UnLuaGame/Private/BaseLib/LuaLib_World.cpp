@@ -10,21 +10,15 @@ static int32 UWorld_SpawnActorDeferred(lua_State* L)
 {
 	int32 NumParams = lua_gettop(L);
 	if (NumParams < 2)
-	{
 		return luaL_error(L, "invalid parameters");
-	}
 
 	UWorld* World = Cast<UWorld>(UnLua::GetUObject(L, 1));
 	if (!World)
-	{
 		return luaL_error(L, "invalid world");
-	}
 
 	UClass* Class = Cast<UClass>(UnLua::GetUObject(L, 2));
 	if (!Class)
-	{
 		return luaL_error(L, "invalid actor class");
-	}
 
 	FTransform Transform;
 	if (NumParams > 2)
@@ -62,9 +56,23 @@ static int32 UWorld_SpawnActorDeferred(lua_State* L)
 		}
 	}
 
+	if (NumParams > 8)
+	{
+		ULevel* Level = Cast<ULevel>(UnLua::GetUObject(L, 9));
+		if (Level)
+		{
+			SpawnParameters.OverrideLevel = Level;
+		}
+	}
+
+	if (NumParams > 9)
+	{
+		SpawnParameters.Name = FName(lua_tostring(L, 10));
+	}
+
 	{
 		const char* ModuleName = NumParams > 6 ? lua_tostring(L, 7) : nullptr;
-		int32 TableRef = INDEX_NONE;
+		int32 TableRef = LUA_NOREF;
 		if (NumParams > 7 && lua_type(L, 8) == LUA_TTABLE)
 		{
 			lua_pushvalue(L, 8);

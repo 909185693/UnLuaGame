@@ -81,6 +81,19 @@ static int32 FVector_ToNetQuantize100(lua_State* L)
 	return 1;
 }
 
+static int32 FVector_ToNetQuantizeNormal(lua_State* L)
+{
+	FVector* V = (FVector*)GetCppInstanceFast(L, 1);
+	if (!V)
+	{
+		return luaL_error(L, "invalid FVector");
+	}
+
+	void* Userdata = NewTypedUserdata(L, FVector_NetQuantizeNormal);
+	new(Userdata) FVector_NetQuantizeNormal(*V);
+	return 1;
+}
+
 static const luaL_Reg FVectorLib[] =
 {
 	{ "ToVector", FVector_ToVector },
@@ -89,6 +102,7 @@ static const luaL_Reg FVectorLib[] =
 	{ "ToNetQuantize", FVector_ToNetQuantize },
 	{ "ToNetQuantize10", FVector_ToNetQuantize10 },
 	{ "ToNetQuantize100", FVector_ToNetQuantize100 },
+	{ "ToNetQuantizeNormal", FVector_ToNetQuantizeNormal },
     { nullptr, nullptr }
 };
 

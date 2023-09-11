@@ -3,9 +3,23 @@
 #include "UnLuaEx.h"
 #include "MathLib/LuaLib_Math.h"
 
+static int32 FLinearColor_ToVector(lua_State* L)
+{
+	FLinearColor* LinearColor = (FLinearColor*)GetCppInstanceFast(L, 1);
+	if (!LinearColor)
+	{
+		return luaL_error(L, "invalid FLinearColor");
+	}
+
+	void* Userdata = NewTypedUserdata(L, FVector);
+	new(Userdata) FVector(*LinearColor);
+	return 1;
+}
+
 static const luaL_Reg FLinearColorLib[] =
 {
-    {nullptr, nullptr}
+	{ "ToVector", FLinearColor_ToVector },
+	{ nullptr, nullptr }
 };
 
 BEGIN_EXPORT_CLASS_EX(true, FLinearColor, UnLuaGame, FLinearColor, nullptr)

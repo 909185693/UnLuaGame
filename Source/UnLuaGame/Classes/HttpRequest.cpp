@@ -6,14 +6,18 @@
 UHttpRequest::UHttpRequest()
 	: Super()
 {
-	HttpRequest->OnProcessRequestComplete().BindUObject(this, &UHttpRequest::ProcessRequestComplete);
-	HttpRequest->OnRequestProgress().BindUObject(this, &UHttpRequest::RequestProgress);
-#if ENGINE_MAJOR_VERSION > 4 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 25)
-	HttpRequest->OnRequestWillRetry().BindUObject(this, &UHttpRequest::RequestWillRetry);
-#endif
-#if ENGINE_MAJOR_VERSION > 4 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 20)
-	HttpRequest->OnHeaderReceived().BindUObject(this, &UHttpRequest::HeaderReceived);
-#endif
+	if (!HasAnyFlags(RF_ClassDefaultObject))
+	{
+		HttpRequest = FHttpModule::Get().CreateRequest();
+		HttpRequest->OnProcessRequestComplete().BindUObject(this, &UHttpRequest::ProcessRequestComplete);
+		HttpRequest->OnRequestProgress().BindUObject(this, &UHttpRequest::RequestProgress);
+	#if ENGINE_MAJOR_VERSION > 4 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 25)
+		HttpRequest->OnRequestWillRetry().BindUObject(this, &UHttpRequest::RequestWillRetry);
+	#endif
+	#if ENGINE_MAJOR_VERSION > 4 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 20)
+		HttpRequest->OnHeaderReceived().BindUObject(this, &UHttpRequest::HeaderReceived);
+	#endif
+	}
 }
 
 void UHttpRequest::Destroy()
@@ -28,7 +32,10 @@ void UHttpRequest::Destroy()
 
 void UHttpRequest::BeginDestroy()
 {
-	HttpRequest->CancelRequest();
+	if (HttpRequest.IsValid())
+	{
+		HttpRequest->CancelRequest();
+	}
 
 	Super::BeginDestroy();
 }
@@ -43,51 +50,82 @@ UHttpRequest* UHttpRequest::Create()
 
 void UHttpRequest::SetVerb(const FString& Verb)
 {
-	HttpRequest->SetVerb(Verb);
+	if (HttpRequest.IsValid())
+	{
+		HttpRequest->SetVerb(Verb);
+	}
 }
 
 void UHttpRequest::SetURL(const FString& URL)
 {
-	HttpRequest->SetURL(URL);
+	if (HttpRequest.IsValid())
+	{
+		HttpRequest->SetURL(URL);
+	}
 }
 
 void UHttpRequest::SetContent(const TArray<uint8>& ContentPayload)
 {
-	HttpRequest->SetContent(ContentPayload);
+	if (HttpRequest.IsValid())
+	{
+		HttpRequest->SetContent(ContentPayload);
+	}
 }
 
 void UHttpRequest::SetContentAsString(const FString& ContentString)
 {
-	HttpRequest->SetContentAsString(ContentString);
+	if (HttpRequest.IsValid())
+	{
+		HttpRequest->SetContentAsString(ContentString);
+	}
 }
 
 bool UHttpRequest::SetContentAsStreamedFile(const FString& Filename)
 {
-	return HttpRequest->SetContentAsStreamedFile(Filename);
+	if (HttpRequest.IsValid())
+	{
+		return HttpRequest->SetContentAsStreamedFile(Filename);
+	}
+
+	return false;
 }
 
 void UHttpRequest::SetHeader(const FString& HeaderName, const FString& HeaderValue)
 {
-	HttpRequest->SetHeader(HeaderName, HeaderValue);
+	if (HttpRequest.IsValid())
+	{
+		HttpRequest->SetHeader(HeaderName, HeaderValue);
+	}
 }
 
 void UHttpRequest::SetTimeout(float InTimeoutSecs)
 {
 #if ENGINE_MAJOR_VERSION > 4 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION > 24)
-	HttpRequest->SetTimeout(InTimeoutSecs);
+	if (HttpRequest.IsValid())
+	{
+		HttpRequest->SetTimeout(InTimeoutSecs);
+	}
 #endif
 }
 
 void UHttpRequest::ClearTimeout()
 {
 #if ENGINE_MAJOR_VERSION > 4 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION > 24)
-	HttpRequest->ClearTimeout();
+	if (HttpRequest.IsValid())
+	{
+		HttpRequest->ClearTimeout();
+	}
 #endif
 }
 
 bool UHttpRequest::ProcessRequest()
 {
-	return HttpRequest->ProcessRequest();
+	if (HttpRequest.IsValid())
+	{
+		return HttpRequest->ProcessRequest();
+	}
+
+	return false;
 }
 
 void UHttpRequest::CancelRequest()
@@ -97,7 +135,12 @@ void UHttpRequest::CancelRequest()
 
 float UHttpRequest::GetElapsedTime()
 {
-	return HttpRequest->GetElapsedTime();
+	if (HttpRequest.IsValid())
+	{
+		return HttpRequest->GetElapsedTime();
+	}
+
+	return 0.f;
 }
 
 void UHttpRequest::ProcessRequestComplete(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully)

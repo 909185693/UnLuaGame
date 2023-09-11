@@ -70,6 +70,9 @@ static const luaL_Reg FTransformLib[] =
 
 BEGIN_EXPORT_CLASS_EX(true, FTransform, UnLuaGame, FTransform, nullptr)
 	ADD_FUNCTION(GetLocation)
+	ADD_FUNCTION(GetRotation)
+	ADD_FUNCTION(GetScale3D)
+	ADD_FUNCTION(TransformRotation)
 	ADD_NAMED_FUNCTION("GetRotator", Rotator)
     ADD_LIB(FTransformLib)
 END_EXPORT_CLASS()
