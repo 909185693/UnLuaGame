@@ -10,7 +10,7 @@
 /*=========================================================================*\
 * Don't want to trust escape character constants
 \*=========================================================================*/
-typedef unsigned char UC;
+typedef unsigned char UCHAR;
 static const char CRLF[] = "\r\n";
 static const char EQCRLF[] = "=\r\n";
 
@@ -27,17 +27,17 @@ static int mime_global_eol(lua_State *L);
 static int mime_global_dot(lua_State *L);
 
 static size_t dot(int c, size_t state, luaL_Buffer *buffer);
-/*static void b64setup(UC *base);*/
-static size_t b64encode(UC c, UC *input, size_t size, luaL_Buffer *buffer);
-static size_t b64pad(const UC *input, size_t size, luaL_Buffer *buffer);
-static size_t b64decode(UC c, UC *input, size_t size, luaL_Buffer *buffer);
+/*static void b64setup(UCHAR *base);*/
+static size_t b64encode(UCHAR c, UCHAR *input, size_t size, luaL_Buffer *buffer);
+static size_t b64pad(const UCHAR *input, size_t size, luaL_Buffer *buffer);
+static size_t b64decode(UCHAR c, UCHAR *input, size_t size, luaL_Buffer *buffer);
 
-/*static void qpsetup(UC *class, UC *unbase);*/
-static void qpquote(UC c, luaL_Buffer *buffer);
-static size_t qpdecode(UC c, UC *input, size_t size, luaL_Buffer *buffer);
-static size_t qpencode(UC c, UC *input, size_t size,
+/*static void qpsetup(UCHAR *class, UCHAR *unbase);*/
+static void qpquote(UCHAR c, luaL_Buffer *buffer);
+static size_t qpdecode(UCHAR c, UCHAR *input, size_t size, luaL_Buffer *buffer);
+static size_t qpencode(UCHAR c, UCHAR *input, size_t size,
         const char *marker, luaL_Buffer *buffer);
-static size_t qppad(UC *input, size_t size, luaL_Buffer *buffer);
+static size_t qppad(UCHAR *input, size_t size, luaL_Buffer *buffer);
 
 /* code support functions */
 static luaL_Reg func[] = {
@@ -57,7 +57,7 @@ static luaL_Reg func[] = {
 \*-------------------------------------------------------------------------*/
 enum {QP_PLAIN, QP_QUOTED, QP_CR, QP_IF_LAST};
 
-static const UC qpclass[] = {
+static const UCHAR qpclass[] = {
     QP_QUOTED, QP_QUOTED, QP_QUOTED, QP_QUOTED, QP_QUOTED, QP_QUOTED,
     QP_QUOTED, QP_QUOTED, QP_QUOTED, QP_IF_LAST, QP_QUOTED, QP_QUOTED,
     QP_QUOTED, QP_CR, QP_QUOTED, QP_QUOTED, QP_QUOTED, QP_QUOTED,
@@ -103,9 +103,9 @@ static const UC qpclass[] = {
     QP_QUOTED, QP_QUOTED, QP_QUOTED, QP_QUOTED
 };
 
-static const UC qpbase[] = "0123456789ABCDEF";
+static const UCHAR qpbase[] = "0123456789ABCDEF";
 
-static const UC qpunbase[] = {
+static const UCHAR qpunbase[] = {
     255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
     255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
     255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
@@ -134,10 +134,10 @@ static const UC qpunbase[] = {
 /*-------------------------------------------------------------------------*\
 * Base64 globals
 \*-------------------------------------------------------------------------*/
-static const UC b64base[] =
+static const UCHAR b64base[] =
         "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-static const UC b64unbase[] = {
+static const UCHAR b64unbase[] = {
     255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
     255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
     255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
@@ -195,8 +195,8 @@ static int mime_global_wrp(lua_State *L)
 {
     size_t size = 0;
     int left = (int) luaL_checknumber(L, 1);
-    const UC *input = (const UC *) luaL_optlstring(L, 2, NULL, &size);
-    const UC *last = input + size;
+    const UCHAR *input = (const UCHAR *) luaL_optlstring(L, 2, NULL, &size);
+    const UCHAR *last = input + size;
     int length = (int) luaL_optnumber(L, 3, 76);
     luaL_Buffer buffer;
     /* end of input black-hole */
@@ -237,14 +237,14 @@ static int mime_global_wrp(lua_State *L)
 /*-------------------------------------------------------------------------*\
 * Fill base64 decode map.
 \*-------------------------------------------------------------------------*/
-static void b64setup(UC *unbase)
+static void b64setup(UCHAR *unbase)
 {
     int i;
-    for (i = 0; i <= 255; i++) unbase[i] = (UC) 255;
-    for (i = 0; i < 64; i++) unbase[b64base[i]] = (UC) i;
+    for (i = 0; i <= 255; i++) unbase[i] = (UCHAR) 255;
+    for (i = 0; i < 64; i++) unbase[b64base[i]] = (UCHAR) i;
     unbase['='] = 0;
 
-    printf("static const UC b64unbase[] = {\n");
+    printf("static const UCHAR b64unbase[] = {\n");
     for (int i = 0; i < 256; i++) {
         printf("%d, ", unbase[i]);
     }
@@ -257,12 +257,12 @@ static void b64setup(UC *unbase)
 * Translate the 3 bytes into Base64 form and append to buffer.
 * Returns new number of bytes in buffer.
 \*-------------------------------------------------------------------------*/
-static size_t b64encode(UC c, UC *input, size_t size,
+static size_t b64encode(UCHAR c, UCHAR *input, size_t size,
         luaL_Buffer *buffer)
 {
     input[size++] = c;
     if (size == 3) {
-        UC code[4];
+        UCHAR code[4];
         unsigned long value = 0;
         value += input[0]; value <<= 8;
         value += input[1]; value <<= 8;
@@ -282,11 +282,11 @@ static size_t b64encode(UC c, UC *input, size_t size,
 * Result, if any, is appended to buffer.
 * Returns 0.
 \*-------------------------------------------------------------------------*/
-static size_t b64pad(const UC *input, size_t size,
+static size_t b64pad(const UCHAR *input, size_t size,
         luaL_Buffer *buffer)
 {
     unsigned long value = 0;
-    UC code[4] = {'=', '=', '=', '='};
+    UCHAR code[4] = {'=', '=', '=', '='};
     switch (size) {
         case 1:
             value = input[0] << 4;
@@ -313,7 +313,7 @@ static size_t b64pad(const UC *input, size_t size,
 * Translate the 4 bytes from Base64 form and append to buffer.
 * Returns new number of bytes in buffer.
 \*-------------------------------------------------------------------------*/
-static size_t b64decode(UC c, UC *input, size_t size,
+static size_t b64decode(UCHAR c, UCHAR *input, size_t size,
         luaL_Buffer *buffer)
 {
     /* ignore invalid characters */
@@ -321,15 +321,15 @@ static size_t b64decode(UC c, UC *input, size_t size,
     input[size++] = c;
     /* decode atom */
     if (size == 4) {
-        UC decoded[3];
+        UCHAR decoded[3];
         int valid, value = 0;
         value =  b64unbase[input[0]]; value <<= 6;
         value |= b64unbase[input[1]]; value <<= 6;
         value |= b64unbase[input[2]]; value <<= 6;
         value |= b64unbase[input[3]];
-        decoded[2] = (UC) (value & 0xff); value >>= 8;
-        decoded[1] = (UC) (value & 0xff); value >>= 8;
-        decoded[0] = (UC) value;
+        decoded[2] = (UCHAR) (value & 0xff); value >>= 8;
+        decoded[1] = (UCHAR) (value & 0xff); value >>= 8;
+        decoded[0] = (UCHAR) value;
         /* take care of paddding */
         valid = (input[2] == '=') ? 1 : (input[3] == '=') ? 2 : 3;
         luaL_addlstring(buffer, (char *) decoded, valid);
@@ -349,10 +349,10 @@ static size_t b64decode(UC c, UC *input, size_t size,
 \*-------------------------------------------------------------------------*/
 static int mime_global_b64(lua_State *L)
 {
-    UC atom[3];
+    UCHAR atom[3];
     size_t isize = 0, asize = 0;
-    const UC *input = (const UC *) luaL_optlstring(L, 1, NULL, &isize);
-    const UC *last = input + isize;
+    const UCHAR *input = (const UCHAR *) luaL_optlstring(L, 1, NULL, &isize);
+    const UCHAR *last = input + isize;
     luaL_Buffer buffer;
     /* end-of-input blackhole */
     if (!input) {
@@ -366,7 +366,7 @@ static int mime_global_b64(lua_State *L)
     luaL_buffinit(L, &buffer);
     while (input < last)
         asize = b64encode(*input++, atom, asize, &buffer);
-    input = (const UC *) luaL_optlstring(L, 2, NULL, &isize);
+    input = (const UCHAR *) luaL_optlstring(L, 2, NULL, &isize);
     /* if second part is nil, we are done */
     if (!input) {
         size_t osize = 0;
@@ -395,10 +395,10 @@ static int mime_global_b64(lua_State *L)
 \*-------------------------------------------------------------------------*/
 static int mime_global_unb64(lua_State *L)
 {
-    UC atom[4];
+    UCHAR atom[4];
     size_t isize = 0, asize = 0;
-    const UC *input = (const UC *) luaL_optlstring(L, 1, NULL, &isize);
-    const UC *last = input + isize;
+    const UCHAR *input = (const UCHAR *) luaL_optlstring(L, 1, NULL, &isize);
+    const UCHAR *last = input + isize;
     luaL_Buffer buffer;
     /* end-of-input blackhole */
     if (!input) {
@@ -412,7 +412,7 @@ static int mime_global_unb64(lua_State *L)
     luaL_buffinit(L, &buffer);
     while (input < last)
         asize = b64decode(*input++, atom, asize, &buffer);
-    input = (const UC *) luaL_optlstring(L, 2, NULL, &isize);
+    input = (const UCHAR *) luaL_optlstring(L, 2, NULL, &isize);
     /* if second is nil, we are done */
     if (!input) {
         size_t osize = 0;
@@ -449,7 +449,7 @@ static int mime_global_unb64(lua_State *L)
 * Split quoted-printable characters into classes
 * Precompute reverse map for encoding
 \*-------------------------------------------------------------------------*/
-static void qpsetup(UC *cl, UC *unbase)
+static void qpsetup(UCHAR *cl, UCHAR *unbase)
 {
 
     int i;
@@ -469,7 +469,7 @@ static void qpsetup(UC *cl, UC *unbase)
     unbase['E'] = 14; unbase['e'] = 14; unbase['F'] = 15;
     unbase['f'] = 15;
 
-printf("static UC qpclass[] = {");
+printf("static UCHAR qpclass[] = {");
     for (int i = 0; i < 256; i++) {
         if (i % 6 == 0) {
             printf("\n    ");
@@ -491,7 +491,7 @@ printf("static UC qpclass[] = {");
     }
 printf("\n};\n");
 
-printf("static const UC qpunbase[] = {");
+printf("static const UCHAR qpunbase[] = {");
     for (int i = 0; i < 256; i++) {
         int c = qpunbase[i];
         printf("%d, ", c);
@@ -503,7 +503,7 @@ printf("\";\n");
 /*-------------------------------------------------------------------------*\
 * Output one character in form =XX
 \*-------------------------------------------------------------------------*/
-static void qpquote(UC c, luaL_Buffer *buffer)
+static void qpquote(UCHAR c, luaL_Buffer *buffer)
 {
     luaL_addchar(buffer, '=');
     luaL_addchar(buffer, qpbase[c >> 4]);
@@ -514,7 +514,7 @@ static void qpquote(UC c, luaL_Buffer *buffer)
 * Accumulate characters until we are sure about how to deal with them.
 * Once we are sure, output to the buffer, in the correct form.
 \*-------------------------------------------------------------------------*/
-static size_t qpencode(UC c, UC *input, size_t size,
+static size_t qpencode(UCHAR c, UCHAR *input, size_t size,
         const char *marker, luaL_Buffer *buffer)
 {
     input[size++] = c;
@@ -557,7 +557,7 @@ static size_t qpencode(UC c, UC *input, size_t size,
 /*-------------------------------------------------------------------------*\
 * Deal with the final characters
 \*-------------------------------------------------------------------------*/
-static size_t qppad(UC *input, size_t size, luaL_Buffer *buffer)
+static size_t qppad(UCHAR *input, size_t size, luaL_Buffer *buffer)
 {
     size_t i;
     for (i = 0; i < size; i++) {
@@ -579,9 +579,9 @@ static size_t qppad(UC *input, size_t size, luaL_Buffer *buffer)
 static int mime_global_qp(lua_State *L)
 {
     size_t asize = 0, isize = 0;
-    UC atom[3];
-    const UC *input = (const UC *) luaL_optlstring(L, 1, NULL, &isize);
-    const UC *last = input + isize;
+    UCHAR atom[3];
+    const UCHAR *input = (const UCHAR *) luaL_optlstring(L, 1, NULL, &isize);
+    const UCHAR *last = input + isize;
     const char *marker = luaL_optstring(L, 3, CRLF);
     luaL_Buffer buffer;
     /* end-of-input blackhole */
@@ -596,7 +596,7 @@ static int mime_global_qp(lua_State *L)
     luaL_buffinit(L, &buffer);
     while (input < last)
         asize = qpencode(*input++, atom, asize, marker, &buffer);
-    input = (const UC *) luaL_optlstring(L, 2, NULL, &isize);
+    input = (const UCHAR *) luaL_optlstring(L, 2, NULL, &isize);
     /* if second part is nil, we are done */
     if (!input) {
         asize = qppad(atom, asize, &buffer);
@@ -618,7 +618,7 @@ static int mime_global_qp(lua_State *L)
 * Accumulate characters until we are sure about how to deal with them.
 * Once we are sure, output the to the buffer, in the correct form.
 \*-------------------------------------------------------------------------*/
-static size_t qpdecode(UC c, UC *input, size_t size, luaL_Buffer *buffer) {
+static size_t qpdecode(UCHAR c, UCHAR *input, size_t size, luaL_Buffer *buffer) {
     int d;
     input[size++] = c;
     /* deal with all characters we can deal */
@@ -655,9 +655,9 @@ static size_t qpdecode(UC c, UC *input, size_t size, luaL_Buffer *buffer) {
 static int mime_global_unqp(lua_State *L)
 {
     size_t asize = 0, isize = 0;
-    UC atom[3];
-    const UC *input = (const UC *) luaL_optlstring(L, 1, NULL, &isize);
-    const UC *last = input + isize;
+    UCHAR atom[3];
+    const UCHAR *input = (const UCHAR *) luaL_optlstring(L, 1, NULL, &isize);
+    const UCHAR *last = input + isize;
     luaL_Buffer buffer;
     /* end-of-input blackhole */
     if (!input) {
@@ -671,7 +671,7 @@ static int mime_global_unqp(lua_State *L)
     luaL_buffinit(L, &buffer);
     while (input < last)
         asize = qpdecode(*input++, atom, asize, &buffer);
-    input = (const UC *) luaL_optlstring(L, 2, NULL, &isize);
+    input = (const UCHAR *) luaL_optlstring(L, 2, NULL, &isize);
     /* if second part is nil, we are done */
     if (!input) {
         luaL_pushresult(&buffer);
@@ -701,8 +701,8 @@ static int mime_global_qpwrp(lua_State *L)
 {
     size_t size = 0;
     int left = (int) luaL_checknumber(L, 1);
-    const UC *input = (const UC *) luaL_optlstring(L, 2, NULL, &size);
-    const UC *last = input + size;
+    const UCHAR *input = (const UCHAR *) luaL_optlstring(L, 2, NULL, &size);
+    const UCHAR *last = input + size;
     int length = (int) luaL_optnumber(L, 3, 76);
     luaL_Buffer buffer;
     /* end-of-input blackhole */

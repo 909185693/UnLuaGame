@@ -85,7 +85,8 @@ static int32 Global_ConvertIPStringToInt(FString IP)
 static int32 Global_GetPlayInEditorID()
 {
 #if UE_EDITOR
-	return FMath::Max(0, GPlayInEditorID);
+	int32 PlayInEditorID = GPlayInEditorID;
+	return FMath::Max(0, PlayInEditorID);
 #else
 	return 0;
 #endif

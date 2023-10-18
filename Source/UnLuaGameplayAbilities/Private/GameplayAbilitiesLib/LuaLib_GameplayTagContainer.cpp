@@ -105,7 +105,11 @@ BEGIN_EXPORT_REFLECTED_CLASS(FGameplayTagContainer)
 	ADD_FUNCTION(RemoveTags)
 	ADD_FUNCTION(Reset)
 	ADD_FUNCTION(ToString)
+#if ENGINE_MAJOR_VERSION >= 5 && ENGINE_MINOR_VERSION >= 3
+	ADD_CONST_FUNCTION_EX("GetGameplayTagArray", const TArray<FGameplayTag>&, GetGameplayTagArray)
+#else
 	ADD_FUNCTION(GetGameplayTagArray)
+#endif
 	ADD_LIB(FGameplayTagContainerLib)
 END_EXPORT_CLASS()
 IMPLEMENT_EXPORTED_CLASS(FGameplayTagContainer)

@@ -21,7 +21,11 @@ BEGIN_EXPORT_REFLECTED_CLASS(FGameplayEffectSpec)
 	ADD_FUNCTION(SetDuration)
 	ADD_FUNCTION(GetDuration)
 	ADD_FUNCTION(GetPeriod)
+#if ENGINE_MAJOR_VERSION >= 5 && ENGINE_MINOR_VERSION >= 3
+	ADD_CONST_FUNCTION_EX("GetChanceToApplyToTarget", float, GetChanceToApplyToTarget)
+#else
 	ADD_FUNCTION(GetChanceToApplyToTarget)
+#endif
 	ADD_FUNCTION(SetContext)
 	ADD_FUNCTION(GetContext)
 	ADD_FUNCTION(GetAllGrantedTags)
