@@ -7,7 +7,6 @@
 		"LuaPanda": "UnrealEditor-LuaPanda.dll",
 		"LuaProtobuf": "UnrealEditor-LuaProtobuf.dll",
 		"LuaSocket": "UnrealEditor-LuaSocket.dll",
-		"UnLuaEnhancedInput": "UnrealEditor-UnLuaEnhancedInput.dll",
 		"UnLuaGame": "UnrealEditor-UnLuaGame.dll",
 		"UnLuaGameplayAbilities": "UnrealEditor-UnLuaGameplayAbilities.dll",
 		"UnLuaProfiler": "UnrealEditor-UnLuaProfiler.dll"

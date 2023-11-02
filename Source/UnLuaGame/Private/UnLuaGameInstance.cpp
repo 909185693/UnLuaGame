@@ -78,13 +78,3 @@ void UUnLuaGameInstance::Logout(AGameModeBase* GameMode, AController* Exiting)
 {
 	ReceiveLogout(GameMode, Exiting);
 }
-
-void UUnLuaGameInstance::ForceGC()
-{
-	GEngine->ForceGarbageCollection(true);
-}
-
-bool UUnLuaGameInstance::IsDedicatedServer() const
-{
-	return Super::IsDedicatedServerInstance();
-}
