@@ -59,4 +59,12 @@ private:
 	FDelegateHandle PreLoginHandle;
 	FDelegateHandle PostLoginHandle;
 	FDelegateHandle LogoutHandle;
+
+protected:
+	UFUNCTION(Exec)
+	virtual void ForceGC();
+
+	/** Returns true if this instance is for a dedicated server world */
+	UFUNCTION(BlueprintCallable, Category = Game)
+	virtual bool IsDedicatedServer() const;
 };
