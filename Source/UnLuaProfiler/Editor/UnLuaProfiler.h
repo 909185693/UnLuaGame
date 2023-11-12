@@ -13,6 +13,7 @@
 #include "UnLuaMonitor/UnLuaMonitorPanel.h"
 #include "UnLuaMemAnalyzer/UnLuaMemAnalyzerPanel.h"
 #include "Widgets/Docking/SDockTab.h"
+#include "Misc/EngineVersionComparison.h"
 
 /** Declares a log category for this module. */
 DECLARE_LOG_CATEGORY_EXTERN(LogUnLuaProfiler, Log, All);
@@ -39,7 +40,11 @@ private:
 
 private:
 	FTickerDelegate TickDelegate;
+#if UE_VERSION_OLDER_THAN(5, 3, 0)
 	FDelegateHandle TickDelegateHandle;
+#else
+	FTSTicker::FDelegateHandle TickDelegateHandle;
+#endif
 	TSharedPtr<class FUICommandList> PluginCommands;
 	TSharedPtr<SUnLuaMonitorPanel> MonitorPanel;
 	TSharedPtr<SUnLuaMemAnalyzerPanel> MemAnalyzerPanel;

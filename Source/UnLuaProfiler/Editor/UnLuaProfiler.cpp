@@ -52,7 +52,11 @@ void FUnLuaProfilerModule::StartupModule()
 			.SetMenuType(ETabSpawnerMenuType::Hidden);
 
 		TickDelegate = FTickerDelegate::CreateRaw(this, &FUnLuaProfilerModule::Tick);
+		#if UE_VERSION_OLDER_THAN(5, 3, 0)
 		TickDelegateHandle = FTicker::GetCoreTicker().AddTicker(TickDelegate);
+		#else
+		TickDelegateHandle = FTSTicker::GetCoreTicker().AddTicker(TickDelegate);
+		#endif
 	}
 
 	if (GIsEditor)
