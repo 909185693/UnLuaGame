@@ -51,7 +51,7 @@ static const luaL_Reg FPrimaryAssetIdLib[] =
 };
 
 // Export Actor Component
-BEGIN_EXPORT_CLASS(FPrimaryAssetId, const FString&)
+BEGIN_EXPORT_REFLECTED_CLASS(FPrimaryAssetId, const FString&)
 	ADD_FUNCTION_EX("IsValid", bool, IsValid)
 	ADD_FUNCTION_EX("ToString", FString, ToString)
 	ADD_STATIC_FUNCTION_EX("FromString", FPrimaryAssetId, FromString, const FString&)
