@@ -96,9 +96,9 @@ public:
 		if (!SettingsModule)
 			return;
 
-		const auto Section = SettingsModule->RegisterSettings("Project", "Plugins", "UnLuaGame",
-			LOCTEXT("UnLuaGameEditorSettingsName", "UnLuaGame"),
-			LOCTEXT("UnLuaGameEditorSettingsDescription", "UnLuaGame Settings"),
+		const auto Section = SettingsModule->RegisterSettings("Project", "Plugins", "UnLua Game",
+			LOCTEXT("UnLuaGameEditorSettingsName", "UnLua Game"),
+			LOCTEXT("UnLuaGameEditorSettingsDescription", "UnLua Game Settings"),
 			GetMutableDefault<UUnLuaGameSettings>());
 		Section->OnModified().BindRaw(this, &FUnLuaGameModule::OnSettingsModified);
 #endif
@@ -109,7 +109,7 @@ public:
 #if WITH_EDITOR
 		ISettingsModule* SettingsModule = FModuleManager::GetModulePtr<ISettingsModule>("Settings");
 		if (SettingsModule)
-			SettingsModule->UnregisterSettings("Project", "Plugins", "UnLuaGame");
+			SettingsModule->UnregisterSettings("Project", "Plugins", "UnLua Game");
 #endif
 	}
 
