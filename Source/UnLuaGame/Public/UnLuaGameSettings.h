@@ -9,7 +9,7 @@
 /**
  * UUnLuaGameSettings
  */
-UCLASS(Config = UnLuaGame, DefaultConfig, Meta = (DisplayName = "UnLua"))
+UCLASS(Config = Game, DefaultConfig, Meta = (DisplayName = "UnLua"))
 class UNLUAGAME_API UUnLuaGameSettings : public UObject
 {
 	GENERATED_BODY()
