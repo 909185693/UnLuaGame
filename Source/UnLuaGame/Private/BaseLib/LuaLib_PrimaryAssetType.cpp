@@ -7,9 +7,9 @@
 
 static int32 FPrimaryAssetType_New(lua_State* L)
 {
+	int32 NumParams = lua_gettop(L);
 	void* Userdata = NewTypedUserdata(L, FPrimaryAssetType);
 
-	int32 NumParams = lua_gettop(L);
 	switch (NumParams)
 	{
 	case 1:
