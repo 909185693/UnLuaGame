@@ -54,6 +54,7 @@ static const luaL_Reg FPrimaryAssetTypeLib[] =
 // Export Actor Component
 BEGIN_EXPORT_REFLECTED_CLASS(FPrimaryAssetType, const FString&)
 	ADD_FUNCTION_EX("IsValid", bool, IsValid)
+	ADD_FUNCTION_EX("GetName", FName, GetName)
 	ADD_FUNCTION_EX("ToString", FString, ToString)
 	ADD_LIB(FPrimaryAssetTypeLib)
 END_EXPORT_CLASS()
