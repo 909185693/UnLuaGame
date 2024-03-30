@@ -96,7 +96,7 @@ void FUnLuaTraceInfoTree::CountSelfTime(EMonitorSortMode SortMode)
 
 void FUnLuaTraceInfoTree::CountNodeSelfTime(TSharedPtr<FUnLuaTraceInfoNode> Node, EMonitorSortMode SortMode)
 {
-	if (Node)
+	if (Node.IsValid())
 	{
 		Node->Children.Sort([SortMode](const TSharedPtr<FUnLuaTraceInfoNode>& A, const TSharedPtr <FUnLuaTraceInfoNode>& B) {
 			switch (SortMode)
@@ -121,17 +121,17 @@ void FUnLuaTraceInfoTree::CountNodeSelfTime(TSharedPtr<FUnLuaTraceInfoNode> Node
 				return A->TotalTime > B->TotalTime;
 				break;
 			}
-			return A->TotalTime > B->TotalTime;
 		});
 
 		// ifdef CORRECT_TIME sub profiler's own time overhead
-		Node->SelfTime = Node->TotalTime - DEVIATION * Node->Count;
-		Node->Average = Node->Count > 0 ? Node->TotalTime / Node->Count : 0;
-		for (int32 i = 0; i < Node->Children.Num(); i++)
-		{
-			Node->SelfTime -= Node->Children[i]->TotalTime;
-			CountNodeSelfTime(Node->Children[i], SortMode);
-		}
+		//Node->SelfTime = Node->TotalTime - DEVIATION * Node->Count;
+		//Node->Average = Node->Count > 0 ? Node->TotalTime / Node->Count : 0;
+		//for (int32 i = 0; i < Node->Children.Num(); i++)
+		//{
+		//	Node->SelfTime -= Node->Children[i]->TotalTime;
+		//	CountNodeSelfTime(Node->Children[i], SortMode);
+		//}
+		//return A->TotalTime > B->TotalTime;
 	}
 }
 

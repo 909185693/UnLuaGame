@@ -76,6 +76,7 @@ public class UnLuaGame : ModuleRules
             {
                 "Core",
                 "CoreUObject",
+                "CoreOnline",
                 "Engine",
                 "SlateCore",
                 "InputCore",
