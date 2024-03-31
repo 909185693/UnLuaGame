@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Misc/EngineVersionComparison.h"
 #include "Http.h"
 #include "HttpRequest.generated.h"
 
@@ -61,7 +62,7 @@ public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FProcessRequestCompleteReply, bool, bConnectedSuccessfully, int32, ResponseCode, const FString&, ContentAsString);
 	UPROPERTY(BlueprintAssignable) FProcessRequestCompleteReply OnProcessRequestComplete;
 
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FRequestProgressReply, int32, BytesSent, int32, BytesReceived);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FRequestProgressReply, int64, BytesSent, int64, BytesReceived);
 	UPROPERTY(BlueprintAssignable) FRequestProgressReply OnRequestProgress;
 
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRequestWillRetryReply, float, SecondsToRetry);
@@ -73,13 +74,18 @@ public:
 protected:
 	void ProcessRequestComplete(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully);
 	void HeaderReceived(FHttpRequestPtr Request, const FString& HeaderName, const FString& NewHeaderValue);
+
+#if UE_VERSION_OLDER_THAN(5, 3, 0)
 	void RequestProgress(FHttpRequestPtr Request, int32 BytesSent, int32 BytesReceived);
+#else
+	void RequestProgress(FHttpRequestPtr Request, uint64 BytesSent, uint64 BytesReceived);
+#endif
 	void RequestWillRetry(FHttpRequestPtr Request, FHttpResponsePtr Response, float SecondsToRetry);
 
 private:
-#if ENGINE_MAJOR_VERSION > 4 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION > 24)
-	TSharedPtr<IHttpRequest, ESPMode::ThreadSafe> HttpRequest;
-#else
+#if UE_VERSION_OLDER_THAN(4, 24, 0)
 	TSharedPtr<IHttpRequest, ESPMode::NotThreadSafe> HttpRequest
+#else
+	TSharedPtr<IHttpRequest, ESPMode::ThreadSafe> HttpRequest;
 #endif
 };

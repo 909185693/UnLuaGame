@@ -7,6 +7,36 @@
 #include "UnLuaGameInstance.generated.h"
 
 
+#if UE_EDITOR
+namespace UnLua
+{
+	class FLuaEnv;
+}
+#endif
+
+USTRUCT()
+struct FLuaDebug
+{
+	GENERATED_BODY()
+
+	FLuaDebug()
+		: PIEInstance(INDEX_NONE)
+		, IP(TEXT(""))
+		, Port(0)
+	{
+		
+	}
+
+	UPROPERTY()
+	int32 PIEInstance;
+
+	UPROPERTY()
+	FString IP;
+
+	UPROPERTY()
+	int32 Port;
+};
+
 UCLASS(Config=Game)
 class UNLUAGAME_API UUnLuaGameInstance : public UGameInstance
 {
@@ -61,4 +91,11 @@ protected:
 	/** Returns true if this instance is for a dedicated server world */
 	UFUNCTION(BlueprintCallable, Category = Game)
 	virtual bool IsDedicatedServer() const;
+
+protected:
+
+	UPROPERTY(Config)
+	TArray<FLuaDebug> LuaDebugs;
+
+	void StartLuaDebuger();
 };

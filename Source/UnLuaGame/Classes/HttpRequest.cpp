@@ -1,6 +1,9 @@
 // Copyright 2022 CQUnreal. All Rights Reserved.
 
 #include "HttpRequest.h"
+#include "Misc/EngineVersionComparison.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(HttpRequest)
 
 
 UHttpRequest::UHttpRequest()
@@ -9,13 +12,20 @@ UHttpRequest::UHttpRequest()
 	if (!HasAnyFlags(RF_ClassDefaultObject))
 	{
 		HttpRequest = FHttpModule::Get().CreateRequest();
-		HttpRequest->OnProcessRequestComplete().BindUObject(this, &UHttpRequest::ProcessRequestComplete);
-		HttpRequest->OnRequestProgress().BindUObject(this, &UHttpRequest::RequestProgress);
-	#if ENGINE_MAJOR_VERSION > 4 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 25)
-		HttpRequest->OnRequestWillRetry().BindUObject(this, &UHttpRequest::RequestWillRetry);
+		HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::ProcessRequestComplete);
+
+	#if UE_VERSION_OLDER_THAN(5, 3, 0)
+		HttpRequest->OnRequestProgress().BindUObject(this, &ThisClass::RequestProgress);
+	#else
+		HttpRequest->OnRequestProgress64().BindUObject(this, &ThisClass::RequestProgress);
 	#endif
-	#if ENGINE_MAJOR_VERSION > 4 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 20)
-		HttpRequest->OnHeaderReceived().BindUObject(this, &UHttpRequest::HeaderReceived);
+
+	#if UE_VERSION_NEWER_THAN(4, 25, 0)
+		HttpRequest->OnRequestWillRetry().BindUObject(this, &ThisClass::RequestWillRetry);
+	#endif
+
+	#if UE_VERSION_NEWER_THAN(4, 20, 0)
+		HttpRequest->OnHeaderReceived().BindUObject(this, &ThisClass::HeaderReceived);
 	#endif
 	}
 }
@@ -164,7 +174,11 @@ void UHttpRequest::HeaderReceived(FHttpRequestPtr Request, const FString& Header
 	OnHeaderReceived.Broadcast(HeaderName, NewHeaderValue);
 }
 
+#if UE_VERSION_OLDER_THAN(5, 3, 0)
 void UHttpRequest::RequestProgress(FHttpRequestPtr Request, int32 BytesSent, int32 BytesReceived)
+#else
+void UHttpRequest::RequestProgress(FHttpRequestPtr Request, uint64 BytesSent, uint64 BytesReceived)
+#endif
 {
 	OnRequestProgress.Broadcast(BytesSent, BytesReceived);
 }

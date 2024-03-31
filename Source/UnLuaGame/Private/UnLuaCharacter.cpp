@@ -7,6 +7,8 @@
 #include "Engine/DamageEvents.h"
 #endif
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(UnLuaCharacter)
+
 
 AUnLuaCharacter::AUnLuaCharacter(const class FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer.SetDefaultSubobjectClass<UUnLuaCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))

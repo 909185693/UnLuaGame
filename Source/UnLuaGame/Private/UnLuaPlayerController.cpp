@@ -3,6 +3,8 @@
 #include "GameFramework/UnLuaPlayerController.h"
 #include "GameFramework/PlayerState.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(UnLuaPlayerController)
+
 
 AUnLuaPlayerController::AUnLuaPlayerController(const class FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

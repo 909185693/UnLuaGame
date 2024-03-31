@@ -2,6 +2,8 @@
 
 #include "GameFramework/UnLuaPlayerState.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(UnLuaPlayerState)
+
 
 AUnLuaPlayerState::AUnLuaPlayerState(const class FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

@@ -2,6 +2,9 @@
 
 #include "GameFramework/UnLuaCharacterMovementComponent.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(UnLuaCharacterMovementComponent)
+
+
 UUnLuaCharacterMovementComponent::UUnLuaCharacterMovementComponent(const class FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {

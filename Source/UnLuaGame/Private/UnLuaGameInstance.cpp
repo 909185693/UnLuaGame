@@ -4,6 +4,11 @@
 #include "GameFramework/GameModeBase.h"
 #include "GameFramework/PlayerState.h"
 #include "GameFramework/PlayerController.h"
+#if UE_EDITOR
+#include "UnLua.h"
+#endif
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(UnLuaGameInstance)
 
 
 UUnLuaGameInstance::UUnLuaGameInstance(const class FObjectInitializer& ObjectInitializer)
@@ -19,6 +24,8 @@ void UUnLuaGameInstance::Init()
 	PreLoginHandle = FGameModeEvents::GameModePreLoginEvent.AddUObject(this, &UUnLuaGameInstance::PreLogin);
 	PostLoginHandle = FGameModeEvents::GameModePostLoginEvent.AddUObject(this, &UUnLuaGameInstance::PostLogin);
 	LogoutHandle = FGameModeEvents::GameModeLogoutEvent.AddUObject(this, &UUnLuaGameInstance::Logout);
+
+	StartLuaDebuger();
 
 	Super::Init();
 }
@@ -60,7 +67,7 @@ void UUnLuaGameInstance::PostLogin(AGameModeBase* GameMode, APlayerController* N
 {
 	ReceivePostLogin(GameMode, NewPlayer);
 }
-
+ 
 void UUnLuaGameInstance::Logout(AGameModeBase* GameMode, AController* Exiting)
 {
 	ReceiveLogout(GameMode, Exiting);
@@ -74,4 +81,24 @@ void UUnLuaGameInstance::ForceGC()
 bool UUnLuaGameInstance::IsDedicatedServer() const
 {
 	return Super::IsDedicatedServerInstance();
+}
+
+void UUnLuaGameInstance::StartLuaDebuger()
+{
+	if (FWorldContext* InstanceWorldContext = GetWorldContext())
+	{
+		for (const FLuaDebug& LuaDeug : LuaDebugs)
+		{
+			if (LuaDeug.PIEInstance == InstanceWorldContext->PIEInstance)
+			{
+				for (TPair<lua_State*, UnLua::FLuaEnv*> Pair : UnLua::FLuaEnv::GetAll())
+				{
+					if (Pair.Key && Pair.Value)
+					{
+						Pair.Value->DoString(FString::Printf(TEXT("require(\"LuaPanda\").start(\"%s\", %d)"), *LuaDeug.IP, LuaDeug.Port));
+					}
+				}
+			}
+		}
+	}
 }

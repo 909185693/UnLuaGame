@@ -4,6 +4,8 @@
 #include "Net/OnlineEngineInterface.h"
 #include "GameFramework/GameSession.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(UnLuaGameMode)
+
 
 AUnLuaGameMode::AUnLuaGameMode(const class FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

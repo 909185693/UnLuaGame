@@ -2,6 +2,8 @@
 
 #include "Camera/UnLuaPlayerCameraManager.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(UnLuaPlayerCameraManager)
+
 AUnLuaPlayerCameraManager::AUnLuaPlayerCameraManager(const class FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
