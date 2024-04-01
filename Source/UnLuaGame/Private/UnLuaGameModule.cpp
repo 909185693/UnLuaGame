@@ -1,9 +1,9 @@
 // Copyright 1998-2019 Epic Games, Inc. All Rights Reserved.
 
 #include "Modules/ModuleManager.h"
+#include "UnLua.h"
 #include "UnLuaGamePrivate.h"
 #include "UnLuaGameSettings.h"
-#include "LuaEnv.h"
 
 #if WITH_EDITOR
 #include "ISettingsModule.h"
@@ -50,6 +50,11 @@ public:
 	virtual void StartupModule() override
 	{
 		RegisterSettings();
+
+		for (TPair<lua_State*, UnLua::FLuaEnv*> Pair : UnLua::FLuaEnv::GetAll())
+		{
+			InitLuaEnv(*Pair.Value);
+		}
 
 		LuaEnvCreatedHandle = UnLua::FLuaEnv::OnCreated.AddRaw(this, &FUnLuaGameModule::OnLuaEnvCreated);
 
@@ -120,8 +125,21 @@ public:
 
 	void OnLuaEnvCreated(UnLua::FLuaEnv& LuaEnv)
 	{
-		lua_State* L = LuaEnv.GetMainState();
+		InitLuaEnv(LuaEnv);
+	}
 
+	void InitLuaEnv(UnLua::FLuaEnv& LuaEnv)
+	{
+		LuaEnv.AddLoader(UnLua::FLuaEnv::FLuaFileLoader::CreateRaw(this, &FUnLuaGameModule::LuaLoader));
+
+		lua_State* L = LuaEnv.GetMainState();
+		check(L);
+
+		ExportLuaGlabol(L);
+	}
+
+	void ExportLuaGlabol(lua_State* L)
+	{
 		lua_getglobal(L, "UE");
 		lua_pushstring(L, "Cast");
 		lua_pushcfunction(L, &Global_Cast);
@@ -248,6 +266,30 @@ public:
 		lua_pushboolean(L, false);
 		#endif
 		lua_setglobal(L, "PLATFORM_XBOXONE");
+	}
+
+	bool LuaLoader(const UnLua::FLuaEnv& LuaEnv, const FString& RelativePath, TArray<uint8>& Data, FString& FullPath)
+	{
+		const auto SlashedRelativePath = RelativePath.Replace(TEXT("."), TEXT("/"));
+		const FString PluginDir = FPaths::ProjectPluginsDir();
+		const UUnLuaGameSettings* UnLuaGameSettings = GetDefault<UUnLuaGameSettings>();
+		if (ensure(UnLuaGameSettings))
+		{
+			const TArray<FString>& LuaScriptsLoaderDirectories = UnLuaGameSettings->LuaScriptsLoaderDirectories;
+			for (int32 i = 0; i < LuaScriptsLoaderDirectories.Num(); i++)
+			{
+				FullPath = FPaths::Combine(FPaths::ProjectDir(), LuaScriptsLoaderDirectories[i], FString::Printf(TEXT("%s.lua"), *SlashedRelativePath));
+
+				if (FFileHelper::LoadFileToArray(Data, *FullPath, FILEREAD_Silent))
+					return true;
+
+				FullPath.ReplaceInline(TEXT(".lua"), TEXT("/Index.lua"));
+				if (FFileHelper::LoadFileToArray(Data, *FullPath, FILEREAD_Silent))
+					return true;
+			}
+		}
+
+		return false;
 	}
 
 private:

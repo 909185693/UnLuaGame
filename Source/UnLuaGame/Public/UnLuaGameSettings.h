@@ -34,4 +34,7 @@ public:
 
 	UPROPERTY(Config, EditAnywhere, Category = "Runtime")
 	bool bExportHexNavSystemLib = false;
+
+	UPROPERTY(Config, EditAnywhere, Category = "Runtime")
+	TArray<FString> LuaScriptsLoaderDirectories;
 };
