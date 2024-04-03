@@ -4,6 +4,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "GameFramework/PlayerState.h"
 #include "GameFramework/PlayerController.h"
+#include "UnLuaGamePrivate.h"
 #if UE_EDITOR
 #include "UnLua.h"
 #endif
@@ -95,6 +96,8 @@ void UUnLuaGameInstance::StartLuaDebuger()
 				{
 					if (Pair.Key && Pair.Value)
 					{
+						UE_LOG(LogUnLuaGame, Log, TEXT("Connect lua debuger: %s:%d"), *LuaDeug.IP, LuaDeug.Port);
+
 						Pair.Value->DoString(FString::Printf(TEXT("require(\"LuaPanda\").start(\"%s\", %d)"), *LuaDeug.IP, LuaDeug.Port));
 					}
 				}
